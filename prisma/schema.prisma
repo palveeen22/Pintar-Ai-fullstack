@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Researcher {
+  id               Int      @id @default(autoincrement())
+  firstname        String
+  lastname         String
+  isPremium        Boolean
+  education        String
+  profileImage     String
+  email            String   @unique
+  password         String
+  background       String
+  gender           String
+  jabatan_akademik String
+  portofolio       Jurnal[]
+  location         String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @default(now())
+}
+
+model Investor {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  password      String
+  firstname     String
+  lastname      String
+  profileImage  String
+  institution   String
+  industry_type String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+  Project       Project[]
+  payment       Payment[]
+}
+
+model Project {
+  id                   Int       @id @default(autoincrement())
+  project_name         String
+  description_project  String
+  project_image        String
+  project_status       Boolean
+  starting_date        DateTime
+  project_budget       Int
+  expected_finish_date DateTime
+  keywords             String
+  investor             Investor? @relation(fields: [investorId], references: [id])
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @default(now())
+  researcherId         Int?
+  investorId           Int?
+}
+
+model Payment {
+  id         Int       @id @default(autoincrement())
+  price      Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now())
+  Investor   Investor? @relation(fields: [investorId], references: [id])
+  investorId Int?
+  status     Boolean
+  invoice    String
+}
+
+model Jurnal {
+  id           Int          @id @default(autoincrement())
+  abstract     String
+  title        String       @unique
+  keywords     String
+  journal_file    String
+  portofolio   Researcher[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @default(now())
+  researcherId Int?
+}
